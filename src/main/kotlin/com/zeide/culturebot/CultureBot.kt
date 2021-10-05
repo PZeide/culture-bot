@@ -37,7 +37,7 @@ object CultureBot {
             logger.info { "Attempt to login the bot." }
             kordClient.login {
                 status = PresenceStatus.DoNotDisturb
-                playing("parcourir Gelbooru !")
+                watching("des posts sur Gelbooru !")
             }
         }
     }
