@@ -4,6 +4,7 @@ import com.zeide.culturebot.gelbooru.GelbooruPost
 import com.zeide.culturebot.gelbooru.GelbooruPost.Companion.forPost
 import dev.kord.core.behavior.MessageBehavior
 import dev.kord.core.behavior.edit
+import dev.kord.rest.builder.message.modify.embed
 
 data class MultiPostDescriptor(
     val posts: List<GelbooruPost>,

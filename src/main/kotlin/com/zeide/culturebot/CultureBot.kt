@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentMap
 
 object CultureBot {
     private val TOKEN = System.getenv("BOT_TOKEN")
-        ?: error("Environment variable BOT_TOKEN not set !")
+        ?: error("Environment variable BOT_TOKEN is missing !")
     private const val PREFIX = "?"
 
     private val taskQueue = TaskQueue()

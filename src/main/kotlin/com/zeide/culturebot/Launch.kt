@@ -9,7 +9,10 @@ import mu.KotlinLogging
 
 val logger = KotlinLogging.logger("CultureBot")
 
-val jsonSerializer = Json { ignoreUnknownKeys = true }
+val jsonSerializer = Json {
+    ignoreUnknownKeys = true
+}
+
 val httpClient = HttpClient(CIO) {
     Json {
         serializer = KotlinxSerializer(jsonSerializer)

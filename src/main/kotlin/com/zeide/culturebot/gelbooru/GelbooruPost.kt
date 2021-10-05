@@ -30,8 +30,9 @@ data class GelbooruPost(
 ) {
     suspend fun fetchProminentColor() = prominentColorCache.getOrPut(id) {
         withContext(Dispatchers.IO) {
-            val imageData = httpClient.get<InputStream>("https://gelbooru.com/thumbnails/$directory/thumbnail_$hash.jpg")
-            val rgb = ColorThief.getColor(ImageIO.read(imageData), 3, true)
+            val rgb = httpClient.get<InputStream>("https://gelbooru.com/thumbnails/$directory/thumbnail_$hash.jpg").use { inputStream ->
+                ColorThief.getColor(ImageIO.read(inputStream), 3, true)
+            }
 
             Color(rgb[0], rgb[1], rgb[2])
         }
