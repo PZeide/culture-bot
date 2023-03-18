@@ -1,4 +1,4 @@
-name: Discord Bot Running
+name: Discord Bot Deployment
 
 on:
   push:
