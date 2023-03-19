@@ -15,16 +15,19 @@ export class FavoritesManager {
   }
 
   public async init(): Promise<void> {
-    FavoritesEntry.init({
-      userId: {
-        type: CultureDataTypes.SNOWFLAKE,
-        primaryKey: true,
+    FavoritesEntry.init(
+      {
+        userId: {
+          type: CultureDataTypes.SNOWFLAKE,
+          primaryKey: true
+        },
+        favorites: {
+          type: CultureDataTypes.JSARRAY(DataTypes.INTEGER),
+          defaultValue: []
+        }
       },
-      favorites: {
-        type: CultureDataTypes.JSARRAY(DataTypes.INTEGER),
-        defaultValue: [],
-      },
-    }, { sequelize: this.database, modelName: "favorites" });
+      { sequelize: this.database, modelName: "favorites" }
+    );
 
     await FavoritesEntry.sync({ alter: true });
   }
@@ -36,24 +39,28 @@ export class FavoritesManager {
 
   public async addFavorite(userId: Snowflake, favorite: number): Promise<void> {
     const favorites = await this.getFavorites(userId);
-    if (favorites.includes(favorite))
-      return;
+    if (favorites.includes(favorite)) return;
 
     favorites.push(favorite);
     await FavoritesEntry.upsert({ userId, favorites });
   }
 
-  public async removeFavorite(userId: Snowflake, favorite: number): Promise<void> {
+  public async removeFavorite(
+    userId: Snowflake,
+    favorite: number
+  ): Promise<void> {
     const favorites = await this.getFavorites(userId);
-    if (!favorites.includes(favorite))
-      return;
+    if (!favorites.includes(favorite)) return;
 
     const index = favorites.indexOf(favorite);
     favorites.splice(index, 1);
     await FavoritesEntry.upsert({ userId, favorites });
   }
 
-  public async isFavorite(userId: Snowflake, favorite: number): Promise<boolean> {
+  public async isFavorite(
+    userId: Snowflake,
+    favorite: number
+  ): Promise<boolean> {
     const favorites = await this.getFavorites(userId);
     return favorites.includes(favorite);
   }

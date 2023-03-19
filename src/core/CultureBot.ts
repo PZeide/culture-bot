@@ -16,20 +16,24 @@ export class CultureBot {
   public readonly dataPath: string;
 
   constructor() {
-    this.client = new Discord.Client({ 
+    this.client = new Discord.Client({
       intents: [Discord.GatewayIntentBits.Guilds],
       presence: {
-        activities: [{
-          name: "gelbooru.com",
-          type: Discord.ActivityType.Watching
-        }]
+        activities: [
+          {
+            name: "gelbooru.com",
+            type: Discord.ActivityType.Watching
+          }
+        ]
       }
     });
 
     this.client.on("ready", this.onClientReady.bind(this));
 
     this.dataPath = getAppDataPath("CultureBot");
-    this.databaseManager = new DatabaseManager(path.join(this.dataPath, "db.sqlite"));
+    this.databaseManager = new DatabaseManager(
+      path.join(this.dataPath, "db.sqlite")
+    );
     this.modulesManager = new ModulesManager(this);
     this.commandsManager = new CommandsManager(this);
   }
@@ -42,7 +46,7 @@ export class CultureBot {
   public get database(): Sequelize {
     return this.databaseManager.database;
   }
-  
+
   public addCommand(command: Command): void {
     this.commandsManager.addCommand(command);
   }
@@ -75,7 +79,6 @@ export class CultureBot {
   }
 
   public ensureReady(): void {
-    if (!this.client.isReady())
-      throw new Error("Client is not ready.");
+    if (!this.client.isReady()) throw new Error("Client is not ready.");
   }
 }

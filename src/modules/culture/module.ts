@@ -20,9 +20,11 @@ class CultureModule extends Module {
     const apiUser = process.env.GELBOORU_API_USER;
 
     if (apiKey === undefined || apiUser === undefined)
-      throw Error("Gelbooru API key or user not set ! Use the GELBOORU_API_KEY and GELBOORU_API_USER environment variables.");
+      throw Error(
+        "Gelbooru API key or user not set ! Use the GELBOORU_API_KEY and GELBOORU_API_USER environment variables."
+      );
 
-    this.gelbooruClient = new GelbooruClient(apiKey, apiUser); 
+    this.gelbooruClient = new GelbooruClient(apiKey, apiUser);
     this.favoritesManager = new FavoritesManager(bot.database);
     this.colorsProcessor = new ColorsProcessor();
     this.carouselsManager = new CarouselsManager(bot, this);

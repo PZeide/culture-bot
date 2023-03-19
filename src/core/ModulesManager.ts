@@ -14,7 +14,7 @@ export abstract class Module {
 
 export class ModulesManager {
   private static readonly modulesDir = path.join(__dirname, "..", "modules");
-  
+
   private readonly bot: CultureBot;
   private readonly modules: Module[];
 
@@ -29,7 +29,10 @@ export class ModulesManager {
       return;
     }
 
-    const files = await glob.default("**/module.{ts,js}", { cwd: ModulesManager.modulesDir, absolute: true });
+    const files = await glob.default("**/module.{ts,js}", {
+      cwd: ModulesManager.modulesDir,
+      absolute: true
+    });
     for (const file of files) {
       const moduleImport = await import(file);
       if (moduleImport === undefined) {
@@ -41,22 +44,30 @@ export class ModulesManager {
       const relativePath = path.relative(ModulesManager.modulesDir, file);
 
       if (moduleClass === undefined) {
-        console.error(`Failed loading module ${relativePath} ! No export found.`);
+        console.error(
+          `Failed loading module ${relativePath} ! No export found.`
+        );
         continue;
       }
 
       if (typeof moduleClass !== "function") {
-        console.error(`Failed loading module ${relativePath} ! Export is not a class.`);
+        console.error(
+          `Failed loading module ${relativePath} ! Export is not a class.`
+        );
         continue;
       }
 
       if (moduleClass.length !== 1) {
-        console.error(`Failed loading module ${relativePath} ! Module constructor must have only one parameter (bot).`);
+        console.error(
+          `Failed loading module ${relativePath} ! Module constructor must have only one parameter (bot).`
+        );
       }
-      
+
       const module = new moduleClass(this.bot);
       if (module === undefined || !(module instanceof Module)) {
-        console.error(`Failed loading module ${relativePath} ! Export is not a Module.`);
+        console.error(
+          `Failed loading module ${relativePath} ! Export is not a Module.`
+        );
         continue;
       }
 
@@ -69,13 +80,15 @@ export class ModulesManager {
 
     await this.loadModules();
     console.log(`Loaded ${this.modules.length} modules.`);
-    
+
     for (const module of this.modules) {
       try {
         await module.init(this.bot);
         console.log(`Initialized module ${module.constructor.name}.`);
       } catch (error) {
-        console.error(`Failed initializing module ${module.constructor.name} !`);
+        console.error(
+          `Failed initializing module ${module.constructor.name} !`
+        );
         console.error(error);
       }
     }
