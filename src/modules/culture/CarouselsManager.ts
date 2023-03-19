@@ -397,13 +397,25 @@ export class CarouselsManager {
     const carouselUuid = interaction.customId.split("/")[2];
     const carousel = this.carousels.get(carouselUuid);
     if (carousel === undefined) {
-      await interaction.reply({ content: "Ce carousel est indisponible", ephemeral: true });
+      await interaction.reply({
+        embeds: [new Discord.EmbedBuilder()
+          .setDescription("**Il n'est plus possible d'interagir avec ce post**")
+          .setColor("DarkRed")
+        ],
+        ephemeral: true
+      });
       return;
     }
     
     if (!await carousel.onButtonAction(interaction)) {
       console.error("Unhandled button action", interaction.customId);
-      await interaction.reply({ content: "Unhandled button action", ephemeral: true });
+      await interaction.reply({
+        embeds: [new Discord.EmbedBuilder()
+          .setDescription("**L'action est indisponible**")
+          .setColor("DarkRed")
+        ],
+        ephemeral: true
+      });
     }
   }
 }
