@@ -1,6 +1,6 @@
 import { CultureBot } from "@core/CultureBot";
 import { CarouselData, CarouselResult, MultiCarouselData } from "@modules/culture/CarouselData";
-import { PostListSearchOptions } from "@modules/culture/GelbooruAPI";
+import { GelbooruPostListSearchOptions } from "@modules/culture/api/GelbooruAPI";
 import CultureModule from "@modules/culture/module";
 import * as datefns from "date-fns";
 import Discord from "discord.js";
@@ -143,10 +143,10 @@ abstract class BaseCarousel implements Carousel {
 }
 
 class SearchCarousel extends BaseCarousel {
-  private readonly searchOptions: PostListSearchOptions;
+  private readonly searchOptions: GelbooruPostListSearchOptions;
   private hidden: boolean;
 
-  public constructor(module: CultureModule, ownerId: Discord.Snowflake,  searchOptions: PostListSearchOptions) {
+  public constructor(module: CultureModule, ownerId: Discord.Snowflake,  searchOptions: GelbooruPostListSearchOptions) {
     super(module, ownerId, CarouselData.empty(module));
     this.searchOptions = searchOptions;
     this.hidden = false;
@@ -376,7 +376,7 @@ export class CarouselsManager {
     bot.client.on("interactionCreate", this.onInteraction.bind(this));
   }
 
-  public async createSearchCarousel(ownerId: Discord.Snowflake, searchOptions: PostListSearchOptions): Promise<Carousel> {
+  public async createSearchCarousel(ownerId: Discord.Snowflake, searchOptions: GelbooruPostListSearchOptions): Promise<Carousel> {
     const carousel = new SearchCarousel(this.module, ownerId, searchOptions);
     await carousel.refresh();
     this.carousels.set(carousel.uuid, carousel);

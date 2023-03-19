@@ -1,5 +1,5 @@
 import { Command } from "@core/CommandsManager";
-import { GelbooruPostRating } from "@modules/culture/GelbooruAPI";
+import { GelbooruPostRating } from "@modules/culture/api/GelbooruAPI";
 import CultureModule from "@modules/culture/module";
 import Discord from "discord.js";
 

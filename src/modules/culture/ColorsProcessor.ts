@@ -1,4 +1,4 @@
-import { GelbooruPost } from "@modules/culture/GelbooruAPI";
+import { GelbooruPost } from "@modules/culture/api/GelbooruAPI";
 import Discord from "discord.js";
 import LRUCache from "lru-cache";
 import Vibrant from "node-vibrant";

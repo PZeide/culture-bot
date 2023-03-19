@@ -5,7 +5,7 @@ import { ColorsProcessor } from "@modules/culture/ColorsProcessor";
 import { CultureCommand } from "@modules/culture/CultureCommand";
 import { FavoritesCommand } from "@modules/culture/FavoritesCommand";
 import { FavoritesManager } from "@modules/culture/FavoritesManager";
-import { GelbooruClient } from "@modules/culture/GelbooruAPI";
+import { GelbooruClient } from "@modules/culture/api/GelbooruAPI";
 
 class CultureModule extends Module {
   public readonly gelbooruClient: GelbooruClient;

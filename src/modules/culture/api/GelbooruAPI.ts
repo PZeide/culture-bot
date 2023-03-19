@@ -1,21 +1,9 @@
-export interface PostListSearchOptions {
-  id?: number
-  limit?: number
-  pid?: number
-  tags?: string
-  change_id?: number
-}
-
-export interface TagListSearchOptions {
-  id?: number
-  after_id?: number
-  limit?: number
-  pid?: number
-  name?: string
-  names?: string[]
-  name_pattern?: string
-  order? : "ASC" | "DESC"
-  order_by?: "date" | "count" | "name"
+export enum GelbooruPostRating {
+  General = "general",
+  Safe = "safe",
+  Sensitive = "sensitive",
+  Questionable = "questionable",
+  Explicit = "explicit",
 }
 
 export interface GelbooruPost {
@@ -50,29 +38,12 @@ export interface GelbooruPost {
   has_children: string
 }
 
-export enum GelbooruTagType {
-  General = 0,
-  Artist = 1,
-  // No idea what is the 2nd tag type
-  Copyright = 3,
-  Character = 4,
-  Metadata = 5,
-}
-
-export interface GelbooruTag {
-  id: number
-  type: GelbooruTagType
-  name: string
-  count: number
-  ambiguous: number
-}
-
-export enum GelbooruPostRating {
-  General = "general",
-  Safe = "safe",
-  Sensitive = "sensitive",
-  Questionable = "questionable",
-  Explicit = "explicit",
+export interface GelbooruPostListSearchOptions {
+  id?: number
+  limit?: number
+  pid?: number
+  tags?: string
+  change_id?: number
 }
 
 export class GelbooruClient {
@@ -105,19 +76,11 @@ export class GelbooruClient {
     return response.json();
   }
 
-  public async getPosts(options: PostListSearchOptions): Promise<GelbooruPost[]> {
+  public async getPosts(options: GelbooruPostListSearchOptions): Promise<GelbooruPost[]> {
     const response = await this.request("post", options);
     if (typeof response !== "object" || !Object.prototype.hasOwnProperty.call(response, "post"))
       return [];
 
     return (response as any).post as GelbooruPost[];
-  }
-
-  public async getTags(options: TagListSearchOptions): Promise<GelbooruTag[]> {
-    const response = await this.request("tag", options);
-    if (typeof response !== "object" || !Object.prototype.hasOwnProperty.call(response, "tag"))
-      return [];
-
-    return (response as any).tag as GelbooruTag[];
   }
 }

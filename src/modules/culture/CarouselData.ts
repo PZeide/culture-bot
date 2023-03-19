@@ -1,4 +1,4 @@
-import { GelbooruClient, GelbooruPost, PostListSearchOptions } from "@modules/culture/GelbooruAPI";
+import { GelbooruClient, GelbooruPost, GelbooruPostListSearchOptions } from "@modules/culture/api/GelbooruAPI";
 import CultureModule from "@modules/culture/module";
 import DiscordJS from "discord.js";
 
@@ -27,7 +27,7 @@ export abstract class CarouselData {
     }
   }
 
-  public static async fromSearch(module: CultureModule, searchOptions: PostListSearchOptions): Promise<CarouselData> {
+  public static async fromSearch(module: CultureModule, searchOptions: GelbooruPostListSearchOptions): Promise<CarouselData> {
     try {
       const posts = await module.gelbooruClient.getPosts(searchOptions);
       if (posts.length === 0)
