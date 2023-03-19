@@ -209,8 +209,19 @@ class SearchCarousel extends BaseCarousel {
 
       return true;
     } else if (action.customId === this.action("refresh")) {
-      this.data = await CarouselData.fromSearch(this.module, this.searchOptions);
-      await action.update(await this.buildMessage());
+      if (this.ownerId === action.user.id) {
+        this.data = await CarouselData.fromSearch(this.module, this.searchOptions);
+        await action.update(await this.buildMessage());
+      } else {
+        await action.reply({
+          embeds: [new Discord.EmbedBuilder()
+            .setDescription("**Seul le propriétaire peut rafrîchir un post**")
+            .setColor("DarkRed")
+          ],
+          ephemeral: true
+        });
+      }
+
       return true;
     }
 
