@@ -1,12 +1,19 @@
-import { GelbooruClient, GelbooruPost, PostListSearchOptions } from "@modules/culture/GelbooruAPI";
+import {
+  GelbooruClient,
+  GelbooruPost,
+  GelbooruPostListSearchOptions
+} from "@modules/culture/api/GelbooruAPI";
 import CultureModule from "@modules/culture/module";
 import DiscordJS from "discord.js";
 
-export type CarouselError = { success: false, error: "MissingPost", postId: number } 
-                          | { success: false, error: "PostsNotFound" } 
-                          | { success: false, error: "ErrorFetchingPost",  stacktrace: unknown }
+export type CarouselError =
+  | { success: false; error: "MissingPost"; postId: number }
+  | { success: false; error: "PostsNotFound" }
+  | { success: false; error: "ErrorFetchingPost"; stacktrace: unknown };
 
-export type CarouselResult = { success: true, post: GelbooruPost } | CarouselError;
+export type CarouselResult =
+  | { success: true; post: GelbooruPost }
+  | CarouselError;
 
 export abstract class CarouselData {
   protected readonly gelbooruClient: GelbooruClient;
@@ -14,36 +21,67 @@ export abstract class CarouselData {
   constructor(gelbooruClient: GelbooruClient) {
     this.gelbooruClient = gelbooruClient;
   }
-  
-  public static async fromUserFavorites(module: CultureModule, userId: DiscordJS.Snowflake): Promise<CarouselData> {
+
+  public static async fromUserFavorites(
+    module: CultureModule,
+    userId: DiscordJS.Snowflake
+  ): Promise<CarouselData> {
     try {
       const postIds = await module.favoritesManager.getFavorites(userId);
       if (postIds.length === 0)
-        return new DelegatedSingleCarouselData(module.gelbooruClient, { success: false, error: "PostsNotFound" });
+        return new DelegatedSingleCarouselData(module.gelbooruClient, {
+          success: false,
+          error: "PostsNotFound"
+        });
 
       return new LazyMultiCarouselData(module.gelbooruClient, postIds);
     } catch (error) {
-      return new DelegatedSingleCarouselData(module.gelbooruClient, { success: false, error: "ErrorFetchingPost", stacktrace: error });
+      return new DelegatedSingleCarouselData(module.gelbooruClient, {
+        success: false,
+        error: "ErrorFetchingPost",
+        stacktrace: error
+      });
     }
   }
 
-  public static async fromSearch(module: CultureModule, searchOptions: PostListSearchOptions): Promise<CarouselData> {
+  public static async fromSearch(
+    module: CultureModule,
+    searchOptions: GelbooruPostListSearchOptions
+  ): Promise<CarouselData> {
     try {
       const posts = await module.gelbooruClient.getPosts(searchOptions);
       if (posts.length === 0)
-        return new DelegatedSingleCarouselData(module.gelbooruClient, { success: false, error: "PostsNotFound" });
+        return new DelegatedSingleCarouselData(module.gelbooruClient, {
+          success: false,
+          error: "PostsNotFound"
+        });
 
       if (searchOptions.limit === 1)
-        return new DelegatedSingleCarouselData(module.gelbooruClient, { success: true, post: posts[0] });
+        return new DelegatedSingleCarouselData(module.gelbooruClient, {
+          success: true,
+          post: posts[0]
+        });
       else
-        return new DelegatedMultiCarouselData(module.gelbooruClient, posts.map(post => { return { success: true, post: post }; }));
+        return new DelegatedMultiCarouselData(
+          module.gelbooruClient,
+          posts.map((post) => {
+            return { success: true, post: post };
+          })
+        );
     } catch (error) {
-      return new DelegatedSingleCarouselData(module.gelbooruClient, { success: false, error: "ErrorFetchingPost", stacktrace: error });
+      return new DelegatedSingleCarouselData(module.gelbooruClient, {
+        success: false,
+        error: "ErrorFetchingPost",
+        stacktrace: error
+      });
     }
   }
 
   public static empty(module: CultureModule): CarouselData {
-    return new DelegatedSingleCarouselData(module.gelbooruClient, { success: false, error: "PostsNotFound" });
+    return new DelegatedSingleCarouselData(module.gelbooruClient, {
+      success: false,
+      error: "PostsNotFound"
+    });
   }
 
   abstract fetch(): Promise<CarouselResult>;
@@ -83,14 +121,21 @@ class LazySingleCarouselData extends CarouselData {
   }
 
   public async fetch(): Promise<CarouselResult> {
-    if (this._result !== null)
-      return Promise.resolve(this._result);
+    if (this._result !== null) return Promise.resolve(this._result);
 
     try {
       const response = await this.gelbooruClient.getPosts({ id: this._postId });
-      this._result = { success: true, post: response[0] } ?? { success: false, error: "MissingPost", postId: this._postId };
+      this._result = { success: true, post: response[0] } ?? {
+        success: false,
+        error: "MissingPost",
+        postId: this._postId
+      };
     } catch (error) {
-      this._result = { success: false, error: "ErrorFetchingPost", stacktrace: error };
+      this._result = {
+        success: false,
+        error: "ErrorFetchingPost",
+        stacktrace: error
+      };
     }
 
     return Promise.resolve(this._result);
@@ -119,7 +164,10 @@ class DelegatedMultiCarouselData extends MultiCarouselData {
     if (this._results.length === 0)
       return Promise.resolve({ success: false, error: "PostsNotFound" });
 
-    this._current = this._current + 1 === this._results.length ? this._current : this._current + 1;
+    this._current =
+      this._current + 1 === this._results.length
+        ? this._current
+        : this._current + 1;
     return Promise.resolve(this._results[this._current]);
   }
 
@@ -160,7 +208,10 @@ class LazyMultiCarouselData extends MultiCarouselData {
     if (this._postIds.length === 0)
       return Promise.resolve({ success: false, error: "PostsNotFound" });
 
-    this._current = this._current + 1 === this._results.length ? this._current : this._current + 1;
+    this._current =
+      this._current + 1 === this._results.length
+        ? this._current
+        : this._current + 1;
     return await this.fetch();
   }
 
@@ -178,10 +229,20 @@ class LazyMultiCarouselData extends MultiCarouselData {
 
     if (this._results[this._current] === null) {
       try {
-        const response = await this.gelbooruClient.getPosts({ id: this._postIds[this._current] });
-        this._results[this._current] = { success: true, post: response[0] } ?? { success: false, error: "MissingPost", postId: this._postIds[this._current] };
+        const response = await this.gelbooruClient.getPosts({
+          id: this._postIds[this._current]
+        });
+        this._results[this._current] = { success: true, post: response[0] } ?? {
+          success: false,
+          error: "MissingPost",
+          postId: this._postIds[this._current]
+        };
       } catch (error) {
-        this._results[this._current] = { success: false, error: "ErrorFetchingPost", stacktrace: error };
+        this._results[this._current] = {
+          success: false,
+          error: "ErrorFetchingPost",
+          stacktrace: error
+        };
       }
     }
 

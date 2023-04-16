@@ -1,6 +1,13 @@
-import { AbstractDataType, AbstractDataTypeConstructor, DataTypes, Sequelize, Utils } from "sequelize";
+import {
+  AbstractDataType,
+  AbstractDataTypeConstructor,
+  DataTypes,
+  Sequelize,
+  Utils
+} from "sequelize";
 
-const UnproxyAbstract: typeof DataTypes.ABSTRACT = DataTypes.ABSTRACT.prototype.constructor;
+const UnproxyAbstract: typeof DataTypes.ABSTRACT =
+  DataTypes.ABSTRACT.prototype.constructor;
 
 class SnowflakeDataType extends UnproxyAbstract {
   public key = "SNOWFLAKE";
@@ -20,7 +27,7 @@ class JsArrayDataType extends UnproxyAbstract implements AbstractDataType {
   public static key = "JSARRAY";
 
   private readonly type: DataTypes.DataTypeAbstract;
-  
+
   constructor(type: DataTypes.DataTypeAbstract) {
     super();
     this.type = type;
@@ -31,13 +38,11 @@ class JsArrayDataType extends UnproxyAbstract implements AbstractDataType {
   }
 
   public validate(value: unknown): boolean {
-    if (!Array.isArray(value))
-      return false;
+    if (!Array.isArray(value)) return false;
 
-    if (!Object.hasOwnProperty.call(this.type, "validate"))
-      return true;
+    if (!Object.hasOwnProperty.call(this.type, "validate")) return true;
 
-    return value.every(v => (this.type as any).validate(v));
+    return value.every((v) => (this.type as any).validate(v));
   }
 
   public _stringify(value: unknown): string {
@@ -50,8 +55,13 @@ class JsArrayDataType extends UnproxyAbstract implements AbstractDataType {
 }
 
 export namespace CultureDataTypes {
-  export const SNOWFLAKE = Utils.classToInvokable(SnowflakeDataType) as unknown as AbstractDataTypeConstructor;
-  export const JSARRAY = (type: DataTypes.DataTypeAbstract) => Utils.classToInvokable(JsArrayDataType)(type) as unknown as AbstractDataTypeConstructor;
+  export const SNOWFLAKE = Utils.classToInvokable(
+    SnowflakeDataType
+  ) as unknown as AbstractDataTypeConstructor;
+  export const JSARRAY = (type: DataTypes.DataTypeAbstract) =>
+    Utils.classToInvokable(JsArrayDataType)(
+      type
+    ) as unknown as AbstractDataTypeConstructor;
 }
 
 export class DatabaseManager {
@@ -69,15 +79,13 @@ export class DatabaseManager {
   }
 
   public get database(): Sequelize {
-    if (!this.initialized)
-      throw new Error("Database is not initialized.");
-      
+    if (!this.initialized) throw new Error("Database is not initialized.");
+
     return this._database;
   }
 
   public async init(): Promise<void> {
-    if (this.initialized)
-      return;
+    if (this.initialized) return;
 
     await this._database.authenticate();
     this.initialized = true;
@@ -85,8 +93,7 @@ export class DatabaseManager {
   }
 
   public async dispose(): Promise<void> {
-    if (!this.initialized)
-      return;
+    if (!this.initialized) return;
 
     await this._database.close();
     this.initialized = false;

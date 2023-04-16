@@ -22,9 +22,14 @@ export class FavoritesCommand extends Command {
     this.module = module;
   }
 
-  public override async execute(interaction: Discord.CommandInteraction): Promise<void> {
+  public override async execute(
+    interaction: Discord.CommandInteraction
+  ): Promise<void> {
     const user = interaction.options.getUser("user") ?? interaction.user;
-    const carousel = await this.module.carouselsManager.createFavoritesCarousel(interaction.user.id, user.id);
+    const carousel = await this.module.carouselsManager.createFavoritesCarousel(
+      interaction.user.id,
+      user.id
+    );
     const message = await carousel.buildMessage();
     await interaction.reply(message);
   }

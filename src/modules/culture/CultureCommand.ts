@@ -1,11 +1,11 @@
 import { Command } from "@core/CommandsManager";
-import { GelbooruPostRating } from "@modules/culture/GelbooruAPI";
+import { GelbooruPostRating } from "@modules/culture/api/GelbooruAPI";
 import CultureModule from "@modules/culture/module";
 import Discord from "discord.js";
 
 export class CultureCommand extends Command {
   private readonly module: CultureModule;
-  
+
   constructor(module: CultureModule) {
     super({
       name: "culture",
@@ -15,7 +15,8 @@ export class CultureCommand extends Command {
           name: "tags",
           description: "The tags to search for",
           type: Discord.ApplicationCommandOptionType.String,
-          required: false
+          required: false,
+          autocomplete: true
         },
         {
           name: "random",
@@ -28,7 +29,7 @@ export class CultureCommand extends Command {
           description: "The number of posts to retrieve",
           type: Discord.ApplicationCommandOptionType.Number,
           required: false,
-          minValue: 1,
+          minValue: 1
         },
         {
           name: "rating",
@@ -64,7 +65,9 @@ export class CultureCommand extends Command {
     this.module = module;
   }
 
-  public async execute(interaction: Discord.ChatInputCommandInteraction): Promise<void> {
+  public async execute(
+    interaction: Discord.ChatInputCommandInteraction
+  ): Promise<void> {
     const tags = interaction.options.getString("tags") ?? "";
     const random = interaction.options.getBoolean("random") ?? true;
     const count = interaction.options.getNumber("count") ?? 1;
@@ -72,11 +75,9 @@ export class CultureCommand extends Command {
 
     const searchTags = tags.split(" ");
 
-    if (random)
-      searchTags.push("sort:random");
+    if (random) searchTags.push("sort:random");
 
-    if (rating !== undefined)
-      searchTags.push(`rating:${rating}`);
+    if (rating !== undefined) searchTags.push(`rating:${rating}`);
 
     /*if (rating === undefined && interaction.channel instanceof Discord.TextChannel && interaction.channel.nsfw) {
       searchTags.push("rating:safe");
@@ -85,12 +86,30 @@ export class CultureCommand extends Command {
       searchTags.push(`rating:${rating}`);
     }*/
 
-    const carousel = await this.module.carouselsManager.createSearchCarousel(interaction.user.id, {
-      tags: searchTags.join(" "),
-      limit: count,
-    });
-    
+    const carousel = await this.module.carouselsManager.createSearchCarousel(
+      interaction.user.id,
+      {
+        tags: searchTags.join(" "),
+        limit: count
+      }
+    );
+
     const message = await carousel.buildMessage();
     await interaction.reply(message);
+  }
+
+  public async autocomplete(
+    interaction: Discord.AutocompleteInteraction
+  ): Promise<void> {
+    const focused = interaction.options.getFocused();
+    if (focused === undefined) return;
+    if (focused !== "tags") {
+      await interaction.respond([]);
+      return;
+    }
+    
+    const tags = interaction.options.getString("tags") ?? "";
+    const tagsArray = tags.split(" ");
+    await interaction.respond([]);
   }
 }

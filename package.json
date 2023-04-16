@@ -9,13 +9,14 @@
     "build": "tsc",
     "start": "yarn build && cross-env NODE_ENV=production TS_NODE_BASEURL=./dist node -r tsconfig-paths/register dist/index.js",
     "dev": "cross-env NODE_ENV=developement ts-node -r tsconfig-paths/register --files src/index.ts",
-    "lint": "eslint ./src --ext .ts"
+    "lint": "eslint ./src --ext .ts",
+    "format": "prettier --write ./src/**/*.ts"
   },
   "dependencies": {
     "appdata-path": "^1.0.0",
     "bufferutil": "^4.0.7",
     "date-fns": "^2.29.3",
-    "discord.js": "^14.7.1",
+    "discord.js": "^14.9.0",
     "dotenv": "^16.0.3",
     "erlpack": "^0.1.4",
     "eslint": "^8.34.0",
@@ -35,6 +36,8 @@
     "@typescript-eslint/eslint-plugin": "^5.53.0",
     "@typescript-eslint/parser": "^5.53.0",
     "cross-env": "^7.0.3",
+    "eslint-config-prettier": "^8.7.0",
+    "prettier": "^2.8.4",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.2",
     "typescript": "^4.9.5"

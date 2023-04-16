@@ -1,14 +1,16 @@
 import { CultureBot } from "@core/CultureBot";
 import { Module } from "@core/ModulesManager";
+import { DanbooruClient } from "@modules/culture/api/DanbooruAPI";
+import { GelbooruClient } from "@modules/culture/api/GelbooruAPI";
 import { CarouselsManager } from "@modules/culture/CarouselsManager";
 import { ColorsProcessor } from "@modules/culture/ColorsProcessor";
 import { CultureCommand } from "@modules/culture/CultureCommand";
 import { FavoritesCommand } from "@modules/culture/FavoritesCommand";
 import { FavoritesManager } from "@modules/culture/FavoritesManager";
-import { GelbooruClient } from "@modules/culture/GelbooruAPI";
 
 class CultureModule extends Module {
   public readonly gelbooruClient: GelbooruClient;
+  public readonly danbooruClient: DanbooruClient;
   public readonly favoritesManager: FavoritesManager;
   public readonly colorsProcessor: ColorsProcessor;
   public readonly carouselsManager: CarouselsManager;
@@ -20,9 +22,12 @@ class CultureModule extends Module {
     const apiUser = process.env.GELBOORU_API_USER;
 
     if (apiKey === undefined || apiUser === undefined)
-      throw Error("Gelbooru API key or user not set ! Use the GELBOORU_API_KEY and GELBOORU_API_USER environment variables.");
+      throw Error(
+        "Gelbooru API key or user not set ! Use the GELBOORU_API_KEY and GELBOORU_API_USER environment variables."
+      );
 
-    this.gelbooruClient = new GelbooruClient(apiKey, apiUser); 
+    this.gelbooruClient = new GelbooruClient(apiKey, apiUser);
+    this.danbooruClient = new DanbooruClient();
     this.favoritesManager = new FavoritesManager(bot.database);
     this.colorsProcessor = new ColorsProcessor();
     this.carouselsManager = new CarouselsManager(bot, this);
