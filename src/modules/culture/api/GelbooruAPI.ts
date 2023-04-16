@@ -67,7 +67,7 @@ export class GelbooruClient {
     for (const [key, value] of Object.entries(options)) {
       url.searchParams.append(key, String(value));
     }
-
+    
     const response = await fetch(url.toString());
     if (!response.ok) {
       throw new Error(`Request failed with status ${response.status}`);

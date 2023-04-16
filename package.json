@@ -16,7 +16,7 @@
     "appdata-path": "^1.0.0",
     "bufferutil": "^4.0.7",
     "date-fns": "^2.29.3",
-    "discord.js": "^14.7.1",
+    "discord.js": "^14.9.0",
     "dotenv": "^16.0.3",
     "erlpack": "^0.1.4",
     "eslint": "^8.34.0",

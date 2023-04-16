@@ -15,7 +15,8 @@ export class CultureCommand extends Command {
           name: "tags",
           description: "The tags to search for",
           type: Discord.ApplicationCommandOptionType.String,
-          required: false
+          required: false,
+          autocomplete: true
         },
         {
           name: "random",
@@ -95,5 +96,20 @@ export class CultureCommand extends Command {
 
     const message = await carousel.buildMessage();
     await interaction.reply(message);
+  }
+
+  public async autocomplete(
+    interaction: Discord.AutocompleteInteraction
+  ): Promise<void> {
+    const focused = interaction.options.getFocused();
+    if (focused === undefined) return;
+    if (focused !== "tags") {
+      await interaction.respond([]);
+      return;
+    }
+    
+    const tags = interaction.options.getString("tags") ?? "";
+    const tagsArray = tags.split(" ");
+    await interaction.respond([]);
   }
 }
